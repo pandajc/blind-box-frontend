@@ -3,6 +3,7 @@ import { mainnet, telosTestnet } from "viem/chains";
 import { nftMarketAbi } from "./nft-market-abi";
 import { decodeEventLog } from "viem/utils";
 import { blindBoxAbi } from "./blind-box-abi";
+import { nftAbi } from "./nft-abi";
 
 export const nftMarketContractAddress: `0x${string}` = "0xD60d331B1999824C84A0A702D07368Fde493dF94";
 export const publicClient = createPublicClient({
@@ -152,7 +153,6 @@ export async function openBox(
     count: bigint;
   }
 ): Promise<readonly bigint[]> {
-
   const walletClient = await newWindowWalletClient();
   if (!walletClient) {
     return [];
@@ -189,7 +189,7 @@ export async function combine({ nftAddr, tokenId }: { nftAddr: `0x${string}`; to
     args: [nftAddr, tokenId],
   });
 
-  const hash = await walletClient?.writeContract(request);
+  const hash = await walletClient.writeContract(request);
 
   const receipt = await publicClient.waitForTransactionReceipt({ hash: hash });
 
@@ -199,6 +199,41 @@ export async function combine({ nftAddr, tokenId }: { nftAddr: `0x${string}`; to
     topics: receipt.logs[0].topics,
   });
   return event.args.tokenId;
+}
+
+export const nftAddress = "0xf3981B00662D7C43C805Ce0ed65B521893B9C3e6";
+
+export async function isApprovedForAll(account: `0x${string}`, operator: `0x${string}`) {
+  return await publicClient.readContract({
+    address: nftAddress,
+    abi: nftAbi,
+    functionName: "isApprovedForAll",
+    args: [account, operator],
+  });
+}
+
+export async function setApprovalTrueForAll(operator: `0x${string}`) {
+  const walletClient = await newWindowWalletClient();
+  if (!walletClient) {
+    return;
+  }
+  const approved = await isApprovedForAll(walletClient.account.address, operator);
+  if (approved) {
+    console.log(`already approved for ${operator}`);
+    return;
+  } else {
+    console.log(`preparing set approval for ${operator}`);
+  }
+  const { request } = await publicClient.simulateContract({
+    address: nftAddress,
+    abi: nftAbi,
+    functionName: "setApprovalForAll",
+    account: walletClient.account.address,
+    args: [operator, true],
+  });
+
+  const hash = await walletClient.writeContract(request);
+  const receipt = await publicClient.waitForTransactionReceipt({ hash: hash });
 }
 
 // event Combined(uint256 indexed tokenId, address indexed token, address indexed owner);

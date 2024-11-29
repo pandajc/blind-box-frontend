@@ -1,10 +1,14 @@
 export const dynamic = 'force-static'
  
-export async function getMyNFTList() {
-  const res = await fetch('https://api.testnet.teloscan.io/v1/account/0x186b4735E114d2666Ea2CAD0Ec3B30ac7b386447/nfts', {
+export async function getMyNFTList(account :string, nftAddress: string) {
+  
+  const params = new URLSearchParams({offset: '0', limit: '50', contract: nftAddress, sort: 'DESC'});
+  const res = await fetch(`https://api.testnet.teloscan.io/v1/account/${account}/nfts?${params.toString()}`, {
     headers: {
       'Content-Type': 'application/json',
     },
+    method: 'GET',
+
   })
   if (!res.ok) {
       console.error(res)

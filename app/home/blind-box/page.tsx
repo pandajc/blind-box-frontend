@@ -1,6 +1,7 @@
 "use client";
 import { blindBoxContractAddress, openBox } from "@/app/contract/contract";
 import { replaceIpfsUrl } from "@/app/ui/nft-card";
+import SimpleNFT from "@/app/ui/simple-nft";
 import { Button, Image, Flex } from "antd";
 import { Content } from "antd/lib/layout/layout";
 import { useState } from "react";
@@ -39,27 +40,18 @@ const OpenBoxComponent: React.FC = () => {
       </Button>
       <div style={{ height: 50 }}></div>
       <Content style={{ padding: "0 50px" }}>
-        {/* {loading === 2 && (  */}
-        {
+        {loading === 2 && (
           <>
-            <Flex justify="center" >
-              <div style={{ fontSize: 50 ,textAlign: "center"}}>Got NFT</div>
+            <Flex justify="center">
+              <div style={{ fontSize: 50, textAlign: "center" }}>Got NFT</div>
             </Flex>
             <Flex justify="center" wrap gap="small">
               {res.map((tokenId: bigint, index: number) => (
-                <div>
-                  <Image
-                    style={{ borderRadius: 16 }}
-                    alt="nft"
-                    width={100}
-                    height={100}
-                    src={replaceIpfsUrl(`ipfs://QmcBbmi6bR8sVvrYMRond1bRFiNsntCW3z7qndJheLhxMA/${tokenId}.png`)}
-                  ></Image>
-                </div>
+                <SimpleNFT tokenId={tokenId} />
               ))}
             </Flex>
           </>
-        }
+        )}
       </Content>
     </>
   );

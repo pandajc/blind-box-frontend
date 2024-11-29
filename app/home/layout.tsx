@@ -60,7 +60,7 @@ export default function nftLayout({ children }: { children: React.ReactNode }) {
         </div>
       </Content>
       <Footer style={{ textAlign: 'center' }}>
-        Ant Design ©{new Date().getFullYear()} Created by Ant UED
+        Blind Box ©{new Date().getFullYear()} Created by <a href='https://github.com/pandajc'>pandajc</a>
       </Footer>
     </Layout>
   );
