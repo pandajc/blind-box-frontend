@@ -1,11 +1,11 @@
-'use client'
-import React from 'react';
-import { Breadcrumb, Flex, Layout, Menu, theme } from 'antd';
+"use client";
+import React from "react";
+import { Breadcrumb, Flex, Layout, Menu, theme } from "antd";
 
-import Link from 'next/link';
+import Link from "next/link";
+import MyConnectButton from "../ui/my-connect-button";
 
 const { Header, Content, Footer } = Layout;
-
 
 const items = [
   { label: "NFT Market", href: "/home/nft-market" },
@@ -22,12 +22,12 @@ export default function nftLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <Layout>
-      <Header style={{ display: 'flex', alignItems: 'center' }}>
-        <div className="demo-logo" />
+      <Header style={{ display: "flex", alignItems: "center", background: colorBgContainer }}>
+        {/* <div className="demo-logo" /> */}
         <Menu
-          theme="dark"
+          theme="light"
           mode="horizontal"
-          defaultSelectedKeys={['0']}
+          defaultSelectedKeys={["0"]}
           // items={items}
           style={{ flex: 1, minWidth: 0 }}
         >
@@ -39,13 +39,12 @@ export default function nftLayout({ children }: { children: React.ReactNode }) {
             </Menu.Item>
           ))}
         </Menu>
+        <div style={{ position: "absolute", right: 50, top: 0 }}>
+        <MyConnectButton />
+      </div>
       </Header>
-      <Content style={{ padding: '0 48px' }}>
-        {/* <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-          <Breadcrumb.Item>List</Breadcrumb.Item>
-          <Breadcrumb.Item>App</Breadcrumb.Item>
-        </Breadcrumb> */}
+      
+      <Content style={{ padding: "0 48px" }}>
         <div
           style={{
             background: colorBgContainer,
@@ -54,15 +53,13 @@ export default function nftLayout({ children }: { children: React.ReactNode }) {
             borderRadius: borderRadiusLG,
           }}
         >
-          Content
-          {children}
           
+          {children}
         </div>
       </Content>
-      <Footer style={{ textAlign: 'center' }}>
-        Blind Box ©{new Date().getFullYear()} Created by <a href='https://github.com/pandajc'>pandajc</a>
+      <Footer style={{ textAlign: "center" }}>
+        Blind Box ©{new Date().getFullYear()} Created by <a href="https://github.com/pandajc">pandajc</a>
       </Footer>
     </Layout>
   );
-};
-
+}

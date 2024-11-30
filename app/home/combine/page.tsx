@@ -1,6 +1,6 @@
 "use client";
 import { getMyNFTList } from "@/app/api/my-nft";
-import { blindBoxContractAddress, combine, openBox, setApprovalTrueForAll } from "@/app/contract/contract";
+import { blindBoxContractAddress, combine, nftAddress, openBox, setApprovalTrueForAll } from "@/app/contract/contract";
 import { replaceIpfsUrl } from "@/app/ui/nft-card";
 import SimpleNFT from "@/app/ui/simple-nft";
 import { Button, Image, Flex } from "antd";
@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import "viem/window";
 
 // todo query token uri by address
-const nftAddr = "0xf3981B00662D7C43C805Ce0ed65B521893B9C3e6";
 const myAddress = "0x186b4735E114d2666Ea2CAD0Ec3B30ac7b386447";
 
 const CombineComponent: React.FC = () => {
@@ -20,7 +19,7 @@ const CombineComponent: React.FC = () => {
 
   useEffect(() => {
     const fetchData = () => {
-      getMyNFTList(myAddress, nftAddr)
+      getMyNFTList(myAddress, nftAddress)
         .then((nftList) => {
           setNftListMap(Object.fromEntries(nftList.map((element: any, index: number) => [element.tokenId, element])));
         })
@@ -98,13 +97,14 @@ const FragmentsMappingComponent = ({
               setApprovalTrueForAll(blindBoxContractAddress)
                 .then((res) => {
                   console.log(res);
-                  combine({ nftAddr: nftAddr, tokenId: BigInt(selectedTokenId) })
+                  combine({ nftAddr: nftAddress, tokenId: BigInt(selectedTokenId) })
                     .then((res) => {
                       console.log(res);
-                      setLoading(2);
                     })
                     .catch((err) => {
-                      console.error(err);
+                      alert(err);
+                    })
+                    .finally(() => {
                       setLoading(0);
                     });
                 })
@@ -123,7 +123,7 @@ const FragmentsMappingComponent = ({
                 {calculateFragmentsNeeded(selectedTokenId).map((tokenId: any, index: number) => (
                   <Flex vertical>
                     <SimpleNFT tokenId={BigInt(tokenId)} />
-                    <div>Amount: {nftListMap[tokenId]?.amount}</div>
+                    <div>Amount: {nftListMap[tokenId]?.amount || 0}</div>
                   </Flex>
                 ))}
               </React.Fragment>

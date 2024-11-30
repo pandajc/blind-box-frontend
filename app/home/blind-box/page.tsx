@@ -15,7 +15,7 @@ const nftAddr = "0xf3981B00662D7C43C805Ce0ed65B521893B9C3e6";
 const value = parseUnits("0.123", 18);
 const OpenBoxComponent: React.FC = () => {
   const [loading, setLoading] = useState<number>(0);
-  const [res, setRes] = useState<readonly bigint[]>([1n, 5n, 8n, 4n, 7n, 5n, 3n, 2n, 2n, 1n]);
+  const [res, setRes] = useState<readonly bigint[]>([]);
 
   return (
     <>
@@ -31,6 +31,7 @@ const OpenBoxComponent: React.FC = () => {
             })
             .catch((err) => {
               console.error(err);
+              alert(err);
               setLoading(0);
             });
         }}
