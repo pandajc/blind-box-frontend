@@ -6,8 +6,6 @@ import { Space } from "antd";
 import MyNFTCard from "@/app/ui/nft-card";
 import { getMyNFTList } from "@/app/api/my-nft";
 import { newWindowWalletClient, nftAddress } from "@/app/contract/contract";
-import { WalletConnect } from "@ant-design/web3-wagmi";
-import WalletButton from "@/app/ui/connector";
 
 const NFTList: React.FC = () => {
   const [account, setAccount] = useState("");
@@ -28,14 +26,12 @@ const NFTList: React.FC = () => {
                 })
                 .catch((error) => {
                   console.error(error);
-                  alert(error);
                 });
             }
           }
         })
         .catch((error) => {
           console.error(error);
-          alert(error);
         });
     };
     fetchData();

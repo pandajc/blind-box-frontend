@@ -2,7 +2,6 @@
 import { newWindowWalletClient } from "@/app/contract/contract";
 import NFTList from "../nft-market/page";
 import { useEffect, useState } from "react";
-import WalletButton from "@/app/ui/connector";
 
 const ListedNFTList = () => {
   const [account, setAccount] = useState("");

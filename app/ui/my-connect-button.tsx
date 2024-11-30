@@ -31,12 +31,10 @@ export default function MyConnectButton() {
           })
           .catch((error) => {
             console.error(error);
-            alert(error);
           });
       })
       .catch((error) => {
         console.error(error);
-        alert(error);
       });
   };
   useEffect(() => {

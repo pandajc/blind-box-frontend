@@ -164,15 +164,18 @@ export async function openBox(
     account: walletClient.account.address,
     args: [nftAddr, count],
     value: value,
-  });
+  }) as any;
 
   const hash = await walletClient.writeContract(request);
-  const tx = await publicClient.waitForTransactionReceipt({ hash: hash });
-  const event = decodeEventLog({
-    abi: parseAbi(["event BoxOpend(address indexed token, address indexed owner, uint256[] tokenIds)"]),
-    data: tx.logs[0].data,
-    topics: tx.logs[0].topics,
-  });
+  const receipt = await publicClient.waitForTransactionReceipt({ hash: hash });
+
+  const logs = parseEventLogs({
+    abi: blindBoxAbi,
+    eventName: ["BoxOpend"],
+    logs: receipt.logs,
+  })
+  const event = logs[0] as any;
+  console.log(event);
   return event.args.tokenIds;
 }
 
@@ -187,17 +190,18 @@ export async function combine({ nftAddr, tokenId }: { nftAddr: `0x${string}`; to
     functionName: "combine",
     account: walletClient.account.address,
     args: [nftAddr, tokenId],
-  });
+  }) as any;
 
   const hash = await walletClient.writeContract(request);
 
   const receipt = await publicClient.waitForTransactionReceipt({ hash: hash });
 
-  const event = decodeEventLog({
-    abi: parseAbi(["event Combined(uint256 indexed tokenId, address indexed token, address indexed owner)"]),
-    data: receipt.logs[0].data,
-    topics: receipt.logs[0].topics,
-  });
+  const logs = parseEventLogs({
+    abi: blindBoxAbi,
+    eventName: ["Combined"],
+    logs: receipt.logs,
+  })
+  const event = logs[0] as any;
   return event.args.tokenId;
 }
 
@@ -230,7 +234,7 @@ export async function setApprovalTrueForAll(operator: `0x${string}`) {
     functionName: "setApprovalForAll",
     account: walletClient.account.address,
     args: [operator, true],
-  });
+  }) as any;
 
   const hash = await walletClient.writeContract(request);
   const receipt = await publicClient.waitForTransactionReceipt({ hash: hash });

@@ -1,6 +1,13 @@
 "use client";
 import { getMyNFTList } from "@/app/api/my-nft";
-import { blindBoxContractAddress, combine, nftAddress, openBox, setApprovalTrueForAll } from "@/app/contract/contract";
+import {
+  blindBoxContractAddress,
+  combine,
+  newWindowWalletClient,
+  nftAddress,
+  openBox,
+  setApprovalTrueForAll,
+} from "@/app/contract/contract";
 import { replaceIpfsUrl } from "@/app/ui/nft-card";
 import SimpleNFT from "@/app/ui/simple-nft";
 import { Button, Image, Flex } from "antd";
@@ -9,27 +16,35 @@ import React from "react";
 import { useEffect, useState } from "react";
 import "viem/window";
 
-// todo query token uri by address
-const myAddress = "0x186b4735E114d2666Ea2CAD0Ec3B30ac7b386447";
-
 const CombineComponent: React.FC = () => {
   const maxTokenId = 4;
   const fragmentsPerCard = 4;
   const [nftListMap, setNftListMap] = useState<any>({});
 
   useEffect(() => {
-    const fetchData = () => {
-      getMyNFTList(myAddress, nftAddress)
-        .then((nftList) => {
-          setNftListMap(Object.fromEntries(nftList.map((element: any, index: number) => [element.tokenId, element])));
+    const fetchData = async () => {
+      newWindowWalletClient()
+        .then((walletClient) => {
+          if (walletClient) {
+            return walletClient.account.address;
+          }
+          return "";
         })
-        .catch((error) => {
-          console.error(error);
+        .then((myAddress) => {
+          getMyNFTList(myAddress, nftAddress)
+            .then((nftList) => {
+              setNftListMap(
+                Object.fromEntries(nftList.map((element: any, index: number) => [element.tokenId, element]))
+              );
+            })
+            .catch((error) => {
+              console.error(error);
+            });
         });
     };
     fetchData();
   }, [getMyNFTList]);
-  console.log("reload..");
+
   return (
     <FragmentsMappingComponent maxTokenId={maxTokenId} fragmentsPerCard={fragmentsPerCard} nftListMap={nftListMap} />
   );
