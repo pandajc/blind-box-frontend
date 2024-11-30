@@ -56,18 +56,19 @@ export async function list({
   amount,
 }: {
   nftAddr: `0x${string}`;
-  tokenId: number;
-  price: number;
-  amount: number;
+  tokenId: bigint;
+  price: bigint;
+  amount: bigint;
 }) {
   const walletClient = await newWindowWalletClient();
   if (!walletClient) {
     return;
   }
+  await setApprovalTrueForAll(nftMarketContractAddress);
   const { request } = await publicClient.simulateContract(
     buildNftMarketParam("list", walletClient.account.address, 0n, [nftAddr, tokenId, price, amount])
   );
-  await walletClient?.writeContract(request);
+  await walletClient.writeContract(request);
 }
 
 export async function purchase(
@@ -76,8 +77,8 @@ export async function purchase(
     orderId,
     amount,
   }: {
-    orderId: number;
-    amount: number;
+    orderId: bigint;
+    amount: bigint;
   }
 ) {
   const walletClient = await newWindowWalletClient();
@@ -88,10 +89,10 @@ export async function purchase(
     buildNftMarketParam("purchase", walletClient.account.address, value, [orderId, amount])
   );
 
-  await walletClient?.writeContract(request);
+  await walletClient.writeContract(request);
 }
 
-export async function revoke({ orderId }: { orderId: number }) {
+export async function revoke({ orderId }: { orderId: bigint }) {
   const walletClient = await newWindowWalletClient();
   if (!walletClient) {
     return;
@@ -99,10 +100,10 @@ export async function revoke({ orderId }: { orderId: number }) {
   const { request } = await publicClient.simulateContract(
     buildNftMarketParam("revoke", walletClient.account.address, 0n, [orderId])
   );
-  await walletClient?.writeContract(request);
+  await walletClient.writeContract(request);
 }
 
-export async function updatePrice({ orderId, newPrice }: { orderId: number; newPrice: number }) {
+export async function updatePrice({ orderId, newPrice }: { orderId: bigint; newPrice: bigint }) {
   const walletClient = await newWindowWalletClient();
   if (!walletClient) {
     return;
@@ -110,17 +111,16 @@ export async function updatePrice({ orderId, newPrice }: { orderId: number; newP
   const { request } = await publicClient.simulateContract(
     buildNftMarketParam("updatePrice", walletClient.account.address, 0n, [orderId, newPrice])
   );
-  await walletClient?.writeContract(request);
+  await walletClient.writeContract(request);
 }
 
 export async function updateAmount(
-  account: `0x${string}`,
   {
     orderId,
     newAmount,
   }: {
-    orderId: number;
-    newAmount: number;
+    orderId: bigint;
+    newAmount: bigint;
   }
 ) {
   const walletClient = await newWindowWalletClient();
@@ -128,10 +128,10 @@ export async function updateAmount(
     return;
   }
   const { request } = await publicClient.simulateContract(
-    buildNftMarketParam("updatePrice", walletClient.account.address, 0n, [orderId, newAmount])
+    buildNftMarketParam("updateAmount", walletClient.account.address, 0n, [orderId, newAmount])
   );
 
-  await walletClient?.writeContract(request);
+  await walletClient.writeContract(request);
 }
 
 // function list(address _nftAddr, uint256 _tokenId, uint256 _price, uint256 _amount)
@@ -234,6 +234,17 @@ export async function setApprovalTrueForAll(operator: `0x${string}`) {
 
   const hash = await walletClient.writeContract(request);
   const receipt = await publicClient.waitForTransactionReceipt({ hash: hash });
+}
+
+
+
+export async function uri(nftAddr: `0x${string}`, tokenId: bigint) {
+    return await publicClient.readContract({
+        address: nftAddress,
+        abi: nftAbi,
+        functionName: "uri",
+        args: [tokenId],
+      });
 }
 
 // event Combined(uint256 indexed tokenId, address indexed token, address indexed owner);
